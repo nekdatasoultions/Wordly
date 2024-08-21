@@ -1,0 +1,41 @@
+# Replace 'YOUR_API_KEY' with your actual Merriam-Webster API key
+API_KEY = 'YOUR_API_KEY'
+MW_API_URL = 'https://www.dictionaryapi.com/api/v3/references/collegiate/json/'
+
+def is_anagram(word1, word2):
+    # Check if words are anagrams
+    return collections.Counter(word1) == collections.Counter(word2)
+
+def check_in_dictionary(word):
+    # Make API call to Merriam-Webster Dictionary
+    response = requests.get(f"{MW_API_URL}{word}?key={API_KEY}")
+    
+    if response.status_code == 200:
+        data = response.json()
+        # If the response returns a valid entry, the word exists in the dictionary
+        return len(data) > 0
+    else:
+        return False
+
+def check_words(word1, word2):
+    # Convert words to lowercase for case insensitive comparison
+    word1 = word1.lower()
+    word2 = word2.lower()
+
+    # Check if both words are in the dictionary
+    if not check_in_dictionary(word1) or not check_in_dictionary(word2):
+        return f"One or both words are not in the dictionary."
+
+    # Check if they are anagrams
+    if is_anagram(word1, word2):
+        return f"'{word1}' and '{word2}' are anagrams."
+    else:
+        return f"'{word1}' and '{word2}' are not anagrams."
+
+# Input words from user
+word1 = input("Enter the first word: ")
+word2 = input("Enter the second word: ")
+
+# Check and print the result
+result = check_words(word1, word2)
+print(result)
